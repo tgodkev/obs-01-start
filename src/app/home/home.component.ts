@@ -2,6 +2,10 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 
 // need these import to make observables.
 import {Observable, Subscription} from 'rxjs';
+import {filter, map} from 'rxjs/operators';
+
+// importing operator from rxjs
+
 
 @Component({
   selector: 'app-home',
@@ -29,7 +33,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         // next emits a new value.
         observer.next(count);
         // complete stops observables when they meet requirements.
-        if (count === 2) {
+        if (count === 5) {
           observer.complete();
         }
         // error cancels the observable does NOT complete
@@ -39,9 +43,26 @@ export class HomeComponent implements OnInit, OnDestroy {
         count++
       }, 1000)
     });
+    // operators are important to modify data. below is a pipe method.
+    // pipe takes a unlimited amount of arguments.
+    // call map operator inside of pipe.
+    // transforms data only after pipe.
+
+    // customIntervalObservable.pipe(map((data: number) => {
+    //   return 'round:' + (data + 1)
+    // }))
+
+    // operators allow to build chain of steps to funnel observable data through.
+
+
     // subscribing to custom observable, to subscribe pass a function that accepts emitted data
     // emiting data is the most common use case. 80% of the time first argument will be data your getting.
-    this.firstObsSubscription = customIntervalObservable.subscribe(data => {
+    this.firstObsSubscription = customIntervalObservable.pipe(filter(data => {
+      // check true of false to continue on the observable chain
+      return data > 0;
+    }), map((data: number) => {
+      return 'round:' + (data + 1)
+    })).subscribe(data => {
       console.log(data)
       // second function is for errors and takes the error as an argument.
     }, error => {
